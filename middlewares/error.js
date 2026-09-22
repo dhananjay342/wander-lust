@@ -1,4 +1,4 @@
-const errorMiddleware = async (err, req, res, next) => {
+const errorMiddleware = async (err, req, res, next) => { // can use "_", or "__" replacing req and next
   const statusCode = err.statusCode ?? res.statusCode ?? 500;
   res.status(statusCode).json({
     success: false,
