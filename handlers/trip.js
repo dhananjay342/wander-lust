@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { create, findOne, remove, update } from "../services/trip.js";
-import { createTripvalidator, updatetripValidator } from "../validators/trip.js";
+import { createTripValidator, updateTripValidator } from "../validators/trip.js";
 const router = Router();
 
-router.post("/", createTripvalidator, async (req, res, next) => {
+router.post("/", createTripValidator, async (req, res, next) => {
   try {
     const trip = await create({ ...req.body, user: req.user});
     res.status(201).json(trip );
@@ -30,7 +30,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.patch("/:id", updatetripValidator, async (req, res, next) => {
+router.patch("/:id", updateTripValidator, async (req, res, next) => {
   try {
     const trip = await update(req.params.id, req.body, req.user);
     res.status(200).json(trip);

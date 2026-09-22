@@ -1,11 +1,11 @@
-import Trip from "../models/trip"
-import { NotFoundError } from "../utils/errors/not-found.js";
+import Trip from "../models/trip.js"
+import { NotFoundError } from "../errors/not-found.js";
 
 export const create = async (data)=>{
     const trip = await Trip.create(data);
     return trip;
 }
- 
+
 export const index = async(userID)=>{
     const trip = await Trip.find({user: userID});
     return trip;

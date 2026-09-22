@@ -1,8 +1,8 @@
 import { body } from "express-validator";
-import { ValidationError } from "../errors/validation";
-import { validate } from "./validate";
+import { ValidationError } from "../errors/validation.js";
+import { validate } from "./validate.js";
 
-export const tripValidator = [
+export const createTripValidator = [
   body("title")
     .notEmpty()
     .withMessage("Title can not be empty")
@@ -63,7 +63,7 @@ export const tripValidator = [
     .escape(),
   validate,
 ];
-export const updatetripValidator = [
+export const updateTripValidator = [
   body("title")
     .optional()
     .isLength({ min: 4 })
