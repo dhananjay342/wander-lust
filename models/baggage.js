@@ -1,32 +1,31 @@
 import { model, Schema } from "mongoose";
 
-
-
-const BaggageSchema = new Schema({
+const BaggageSchema = new Schema(
+  {
     name: {
-        type: String,
-        trim: true,
-        required: true
+      type: String,
+      trim: true,
+      required: true,
     },
     completed: {
-        type: Bollean,
-        default: false,
+      type: Bollean,
+      default: false,
     },
-    trip:{
-        type: Schema.Types.ObjectId,
-        ref: "Trip",
-        required: true
+    trip: {
+      type: Schema.Types.ObjectId,
+      ref: "Trip",
+      required: true,
     },
-    user:{
-        type: Schema.Types.ObjectId,
-        ref: "User"
-        required: true
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-},
-    {
-        timestamps: true,
-    }
-)
+  },
+  {
+    timestamps: true,
+  },
+);
 const Baggage = model("Baggage", BaggageSchema);
 
 export default Baggage;
