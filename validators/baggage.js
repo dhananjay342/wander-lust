@@ -7,7 +7,7 @@ export const createBaggageValidator = [
   .notEmpty()
   .withMessage("name cannot be empty")
   .isLength({min:2})
-  .withMessage("name ,ust be atleast 2 characters" )
+  .withMessage("name ,ust be atleast 2 character" )
   .trim()
   .escape(),
 body("completed")
