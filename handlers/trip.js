@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { create, findOne, remove, update } from "../services/trip.js";
+import {accept, create, findOne, index, invite, remove, update } from "../services/trip.js";
 import { createTripValidator, updateTripValidator } from "../validators/trip.js";
 const router = Router();
 
@@ -46,6 +46,27 @@ router.delete("/:id", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+router.post("/:id/invite", async (req, res, next) => {
+  try {
+    const result = await invite(req.params.id, req.user, req.body.collaboratorsEmails);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/:id/invite/accept', async (req, res, next) => {
+    try {
+        const result = await accept(
+            req.query.token,
+            req.user,
+        );
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
 });
 
 export default router;

@@ -1,37 +1,97 @@
-import Trip from "../models/trip.js"
+import { generateAccessToken, verifyAccessToken } from "../config/jwt.js";
+import { ConflictError } from "../errors/conflict.js";
 import { NotFoundError } from "../errors/not-found.js";
+import Trip from "../models/trip.js"
+import sendMail from "../utils/sendMail.js";
+
 
 export const create = async (data)=>{
     const trip = await Trip.create(data);
     return trip;
 }
 
-export const index = async(userID)=>{
-    const trip = await Trip.find({user: userID});
+export const index = async (userId)=>{
+    const trip = await Trip.find({user: userId});
     return trip;
 }
 
-export const update = async (id, data, userID) =>{
-    const trip = await Trip.findOneAndUpdate({_id: id, user : userID }, data, { returnDocument: "after"});
-    if(!trip) {
+export const update = async (id, data, userId)=>{
+    const trip = await Trip.findOneAndUpdate({_id: id, user: userId}, data, { returnDocument: "after"});
+
+     if( !trip ){
         throw new NotFoundError("Trip not found");
     }
+
     return trip;
 }
 
-export const remove = async (id, userID) =>{
-    const trip = await Trip.findOneAndDelete({_id: id, user : userID });
-    if(!trip) {
+export const remove = async (id, userId) => {
+    const trip = await Trip.findOneAndDelete({_id: id, user:userId});
+
+    if( !trip ){
         throw new NotFoundError("Trip not found");
     }
+
     return trip;
 }
 
-export const findOne = async (id, userID) =>{
-    const trip = await Trip.findOne({ _id: id, user : userID }).populate("user","name").populate("collaborators","name email");
-    if(!trip) {
+export const findOne = async (id, userId)=>{
+    const trip = await Trip.findOne({_id: id, user: userId}).populate("user", "name").populate("collaborators", "name email");
+
+    if( !trip ){
         throw new NotFoundError("Trip not found");
     }
+
     return trip;
 }
 
+export const invite = async (id, userId, collaboratorsEmails)=>{
+    const trip = await findOne(id, userId);
+
+    if( !trip ){
+        throw new NotFoundError("Trip not found or you do not have access");
+    }
+
+    const check = trip.collaborators.some((c)=>{
+        collaboratorsEmails.includes(c)
+    })
+
+    if(check){
+        throw new ConflictError("Collaborator already invited");
+    }
+
+    const token = await generateAccessToken({tripID: id}, "1h");
+
+    const link = `${process.env.FRONTEND_URL}/trips/${id}/invite/accept?token=${token}`;
+
+    await sendMail(collaboratorsEmails.join(","), "Invitation to join Trip", {
+        link: link,
+        title: trip.title,
+        startDate: trip.startDate.toDateString(),
+        endDate: trip.endDate.toDateString(),
+        name: trip.user.name
+    })
+
+    return { message: "Invitation sent successfully"}
+}
+
+export const accept = async (token, userId) => {
+  const tripId = verifyAccessToken(token);
+  const trip = await Trip.findOne({ _id: tripId }).populate(
+    "collaborators"
+  );
+
+  if (!trip) throw new NotFoundError("Trip not found");
+  if (
+    trip.collaborators.some(
+      (collaborator) => collaborator._id.toString() === userId.toString()
+    )
+  ) {
+    throw new ConflictError("User already a collaborator");
+  }
+
+  trip.collaborators.push(userId);
+  await trip.save();
+
+  return { message: "Invitation accepted successfully" };
+}

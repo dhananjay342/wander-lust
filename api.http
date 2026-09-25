@@ -1,14 +1,14 @@
 @baseUrl=http://localhost:3000
-@userId=6a9e73ef2c72958a93079674
+@userId=6ab68e1e26dd79acfc2056aa
 
 ### create user
 POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "name": "yuraj",
-  "email": "yurajdoe14@example.com",
-  "password": "user@123"
+  "name": "djshah",
+  "email": "dj1234@example.com",
+  "password": "user@user"
 }
 
 ### get all users

@@ -6,7 +6,7 @@ const router= Router();
 
 router.post("/", createBaggageValidator, async (req, res, next) => {
   try {
-    const trip = await create({ ...req.body, user: req.user, trip: req.params.tripID});
+    const trip = await create({ ...req.body, user: req.user, trip: req.params.tripId});
     res.status(201).json(baggage );
   } catch (error) {
     next(error);
@@ -15,7 +15,7 @@ router.post("/", createBaggageValidator, async (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
   try {
-    const baggage = await index(req.user,req.params.tripID);
+    const baggage = await index(req.user,req.params.tripId);
     res.status(200).json(baggage);
   } catch (error) {
     next(error);
